@@ -1,0 +1,9 @@
+# Real config with credentials
+config/ga4.ini
+
+# Output files
+scripts/*_output.*
+scripts/rezultate/
+scripts/dashboard_data.js
+__pycache__/
+*.pyc
