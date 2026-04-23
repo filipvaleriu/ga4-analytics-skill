@@ -22,7 +22,48 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-CONFIG_DIR = ROOT / "config"
+# Calea "interna" a skill-ului (contine doar ga4.template.ini)
+_SKILL_INTERNAL_CONFIG_DIR = ROOT / "config"
+
+
+def _resolve_config_dir() -> Path:
+    """Determina dinamic unde caut ga4.ini / google_ads.ini / facebook_ads.ini.
+
+    Ordinea (primul care exista castiga):
+      1. Env var FGO_CONFIG_DIR              (override explicit - orice folder config/)
+      2. Env var FGO_GA4_CONFIG parent dir    (compatibilitate cu skill_loader.py)
+      3. cwd / "config"                       (rulat din root proiect ca Marketing-FGO)
+      4. parent(script) / "config"            (script copiat local, cu config/ langa)
+      5. skill internal ROOT/"config"         (fallback - doar template-uri)
+    """
+    # 1. Override explicit via env var
+    env_dir = os.environ.get("FGO_CONFIG_DIR")
+    if env_dir and Path(env_dir).is_dir():
+        return Path(env_dir)
+
+    # 2. FGO_GA4_CONFIG = full path to ga4.ini; derivam parent dir
+    env_ga4 = os.environ.get("FGO_GA4_CONFIG")
+    if env_ga4:
+        p = Path(env_ga4)
+        if p.exists():
+            return p.parent
+
+    # 3. cwd / config  (cazul pipeline-ului FGO care ruleaza cu cwd=Marketing-FGO root)
+    cwd_config = Path.cwd() / "config"
+    if cwd_config.is_dir():
+        return cwd_config
+
+    # 4. Script parent - util daca config_loader e copiat langa config/
+    # (ex: project root care are atat config_loader.py cat si config/)
+    parent_config = ROOT.parent / "config"
+    if parent_config.is_dir():
+        return parent_config
+
+    # 5. Fallback la folder-ul intern al skill-ului (poate avea doar template-uri)
+    return _SKILL_INTERNAL_CONFIG_DIR
+
+
+CONFIG_DIR = _resolve_config_dir()
 
 # ---- Import skill DB (fgo-db-analytics) ----
 # Adaugam skill-ul la sys.path ca sa putem importa fgo_connect.
