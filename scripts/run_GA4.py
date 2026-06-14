@@ -80,17 +80,20 @@ FUNNEL_EVENTS = [
 ]
 
 FEATURE_EVENTS = [
-    "creare_factura_ios",
-    "modificare_factura_ios",
-    "acceptare_factura_furnizor_ios",
-    "respingere_factura_furnizor_ios",
-    "creare_comanda_ios",
-    "modificare_comanda_ios",
-    "eroare_creare_factura_ios",
-    "eroare_modificare_factura_ios",
-    "eroare_creare_comanda_ios",
-    "eroare_modificare_comanda_ios",
-    "eroare_creare_cont_ios",
+    # Taxonomie noua aplicatie (>= 13-19 mai 2026): creare->add, modificare->edit,
+    # eroare_creare/modificare -> err_add/err_edit. acceptare/respingere furnizor
+    # + eroare_creare_cont au ramas neschimbate (singurele similare cu varianta veche).
+    "add_factura_ios",
+    "edit_factura_ios",
+    "acceptare_factura_furnizor_ios",   # NESCHIMBAT
+    "respingere_factura_furnizor_ios",  # NESCHIMBAT
+    "add_comanda_ios",
+    "edit_comanda_ios",
+    "err_add_factura_ios",
+    "err_edit_factura_ios",
+    "err_add_comanda_ios",
+    "err_edit_comanda_ios",
+    "eroare_creare_cont_ios",           # NESCHIMBAT (inca activ)
 ]
 
 ENGAGEMENT_EVENTS = [
@@ -125,17 +128,20 @@ FUNNEL_EVENTS_ANDROID = [
 ]
 
 FEATURE_EVENTS_ANDROID = [
-    "creare_factura_android",
-    "modificare_factura_android",
-    "acceptare_factura_furnizor_android",
-    "respingere_factura_furnizor_android",
-    "creare_comanda_android",
-    "modificare_comanda_android",
-    "eroare_creare_factura_android",
-    "eroare_modificare_factura_android",
-    "eroare_creare_comanda_android",
-    "eroare_modificare_comanda_android",
-    "eroare_creare_cont_android",
+    # Taxonomie noua (>= 13-19 mai 2026). NOTA: pe Android vechile event-uri inca
+    # ruleaza in paralel (versiuni vechi de app); folosim DOAR cele noi ca sa nu
+    # dublam la numarare (decizie: "doar comut pe event-urile noi").
+    "add_factura_android",
+    "edit_factura_android",
+    "acceptare_factura_furnizor_android",   # NESCHIMBAT
+    "respingere_factura_furnizor_android",  # NESCHIMBAT
+    "add_comanda_android",
+    "edit_comanda_android",
+    "err_add_factura_android",
+    "err_edit_factura_android",
+    "err_add_comanda_android",
+    "err_edit_comanda_android",
+    "eroare_creare_cont_android",           # NESCHIMBAT (inca activ)
 ]
 
 ENGAGEMENT_EVENTS_ANDROID = [
@@ -466,16 +472,16 @@ def build_ds3_features(access_token, start_date, end_date):
 
         d = days[day]
         mapping = {
-            "creare_factura_ios": "creare_factura",
-            "modificare_factura_ios": "modificare_factura",
+            "add_factura_ios": "creare_factura",
+            "edit_factura_ios": "modificare_factura",
             "acceptare_factura_furnizor_ios": "acceptare_factura",
             "respingere_factura_furnizor_ios": "respingere_factura",
-            "creare_comanda_ios": "creare_comanda",
-            "modificare_comanda_ios": "modificare_comanda",
-            "eroare_creare_factura_ios": "err_creare_factura",
-            "eroare_modificare_factura_ios": "err_modificare_factura",
-            "eroare_creare_comanda_ios": "err_creare_comanda",
-            "eroare_modificare_comanda_ios": "err_modificare_comanda",
+            "add_comanda_ios": "creare_comanda",
+            "edit_comanda_ios": "modificare_comanda",
+            "err_add_factura_ios": "err_creare_factura",
+            "err_edit_factura_ios": "err_modificare_factura",
+            "err_add_comanda_ios": "err_creare_comanda",
+            "err_edit_comanda_ios": "err_modificare_comanda",
             "eroare_creare_cont_ios": "err_creare_cont",
         }
         col = mapping.get(evt)
@@ -534,16 +540,16 @@ def build_ds3_features_android(access_token, start_date, end_date):
 
         d = days[day]
         mapping = {
-            "creare_factura_android": "creare_factura",
-            "modificare_factura_android": "modificare_factura",
+            "add_factura_android": "creare_factura",
+            "edit_factura_android": "modificare_factura",
             "acceptare_factura_furnizor_android": "acceptare_factura",
             "respingere_factura_furnizor_android": "respingere_factura",
-            "creare_comanda_android": "creare_comanda",
-            "modificare_comanda_android": "modificare_comanda",
-            "eroare_creare_factura_android": "err_creare_factura",
-            "eroare_modificare_factura_android": "err_modificare_factura",
-            "eroare_creare_comanda_android": "err_creare_comanda",
-            "eroare_modificare_comanda_android": "err_modificare_comanda",
+            "add_comanda_android": "creare_comanda",
+            "edit_comanda_android": "modificare_comanda",
+            "err_add_factura_android": "err_creare_factura",
+            "err_edit_factura_android": "err_modificare_factura",
+            "err_add_comanda_android": "err_creare_comanda",
+            "err_edit_comanda_android": "err_modificare_comanda",
             "eroare_creare_cont_android": "err_creare_cont",
         }
         col = mapping.get(evt)
