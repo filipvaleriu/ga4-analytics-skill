@@ -144,6 +144,12 @@ def _load_ini(path: Path) -> configparser.ConfigParser:
     return cp
 
 
+# secret_store.py traieste langa acest fisier. Cand config_loader e incarcat via
+# importlib (shim-ul din proiect, cu alt cwd si fara dir-ul lui pe sys.path),
+# importul simplu esua silentios -> overlay no-op -> secretele ramaneau goale.
+# Asiguram explicit ROOT pe sys.path inainte de import.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 try:
     # Secretele vin din Windows Credential Manager (keyring) daca au fost migrate;
     # altfel raman valorile din .ini (backward-compatible).
@@ -221,6 +227,13 @@ def load_apis(require_google_ads: bool = True) -> configparser.ConfigParser:
         p = CONFIG_DIR / name
         if p.exists():
             cp.read(p, encoding="utf-8")
+    # Overlay secrete din keyring (client_secret/refresh_token/developer_token/...)
+    # — la fel ca load_google_ads()/load_ga4(). Fara asta, dupa migrarea secretelor
+    # in Credential Manager, sectiunile au campurile secrete goale si pipeline-ul
+    # de ads (care foloseste load_apis) pica la auth.
+    for svc in ("google_ads", "ga4", "meta_ads"):
+        if cp.has_section(svc):
+            overlay_secrets(cp, svc)
     return cp
 
 
