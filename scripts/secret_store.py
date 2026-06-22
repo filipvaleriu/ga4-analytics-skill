@@ -42,6 +42,7 @@ SERVICE_PREFIX = "FGO"
 SECRET_FIELDS: dict[str, tuple[str, ...]] = {
     "google_ads": ("developer_token", "client_secret", "refresh_token"),
     "ga4": ("client_secret", "refresh_token"),
+    "search_console": ("client_secret", "refresh_token"),
     "meta_ads": ("app_secret", "access_token"),
     "facebook_ads": ("app_secret", "access_token"),
 }
